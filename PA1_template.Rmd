@@ -42,7 +42,7 @@ chrIntervals <- levels (as.factor(dfStep_data$interval))
 numMax_steps <- as.integer(max(numAve_steps_interval))
 numMax_occurs_at <- chrIntervals[numIndex]
 # Plot the data
-plot(levels (as.factor(dfStep_data$interval)), numAve_steps_interval, ,type="l",
+plot(levels (as.factor(dfStep_data$interval)), numAve_steps_interval, type="l",
      main="Average Steps By 5 Minute Interval",
      xlab="5 Minute Interval", ylab="Average Steps")
 ```
