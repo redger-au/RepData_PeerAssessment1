@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r load,echo=TRUE}
+
+```r
 # File names (as constants)
 chrFile_input <- "activity.zip"
 chrFile_read <- "activity.csv"
@@ -16,7 +12,8 @@ unzip (chrFile_input)
 dfStep_data <- read.csv(chrFile_read)
 ```
 ## What is mean total number of steps taken per day?
-```{r total_steps_raw,echo=TRUE}
+
+```r
 # Calculate the total number of steps per day
 numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum,na.rm=TRUE)
 # Generate the new mean & median  steps per day
@@ -27,13 +24,16 @@ hist(numSteps_day,20,
      main="Histogram Of Frequency\nTotal Steps Occurs Per Day\n(raw data)",
      xlab="Total Steps Per Day",ylab="Frequency(number of times occuring)")
 ```
+
+![](PA1_template_files/figure-html/total_steps_raw-1.png)
   
-The mean of the total number of steps per day is `r numSteps_mean`
- and the median of the total number of steps per day is `r numSteps_median`  
+The mean of the total number of steps per day is 9354
+ and the median of the total number of steps per day is 10395  
 
 ## What is the average daily activity pattern?
 
-```{r activity_pattern_raw,echo=TRUE}
+
+```r
 # Generate base data
 numAve_steps_interval <- tapply(dfStep_data$steps,dfStep_data$interval,FUN=mean,na.rm=TRUE)
 # Which 5 minute time-period averages max steps
@@ -46,15 +46,18 @@ plot(levels (as.factor(dfStep_data$interval)), numAve_steps_interval, ,type="l",
      main="Average Steps By 5 Minute Interval",
      xlab="5 Minute Interval", ylab="Average Steps")
 ```
+
+![](PA1_template_files/figure-html/activity_pattern_raw-1.png)
   
 As can bee seen in the chart above, a big activity peak occurs in the morning  
 
-The maximum number of steps (on average) is `r numMax_steps`
- and occurs in the 5 minute interval starting at `r numMax_occurs_at`
+The maximum number of steps (on average) is 206
+ and occurs in the 5 minute interval starting at 835
 
 ## Imputing missing values
 
-```{r impute_values,echo=TRUE}
+
+```r
 # Calculate total number of NAs
 numNas <- sum(is.na(dfStep_data$steps))
 
@@ -75,12 +78,14 @@ hist(numSteps_day_imp,20,
      main="Histogram Of Frequency\nTotal Steps Occurs Per Day\n(with imputed data)",
      xlab="Total Steps Per Day",ylab="Frequency(number of times occuring)")
 ```
+
+![](PA1_template_files/figure-html/impute_values-1.png)
   
-There were `r numNas` NAs in the raw data.  
+There were 2304 NAs in the raw data.  
   
 Once NAs are replaced with imputed data (ie. with the average for that 5 minute time period)  
-1.  The new mean steps per day is `r numSteps_mean_imp` (vs `r numSteps_mean` previously)  
-2.  The new median steps per day is `r numSteps_median_imp`  (vs `r numSteps_median` previously)  
+1.  The new mean steps per day is 10765 (vs 9354 previously)  
+2.  The new median steps per day is 10762  (vs 10395 previously)  
   
 We can see that the mean and median number of steps per day have risen once data is "imputed".
  This reflects the fact that we have added data where previously there was none.   
@@ -95,7 +100,8 @@ NOTE: Imputed data is
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r weekdays_v_weekends,echo=TRUE}
+
+```r
 # Compare weekday activity to weekends
 # Start by categorising days as either weekday or weekend
 library(lubridate, warn.conflicts=FALSE)  # Date handling, myd function
@@ -118,6 +124,8 @@ plot(levels(as.factor(dfPlot_final$interval)), dfPlot_final$AveSteps[dfPlot_fina
      ylim=numYrange, main="Weekend Average Steps By 5 Minute Interval",
      xlab="5 Minute Interval", ylab="Average Steps", type="l")
 ```
+
+![](PA1_template_files/figure-html/weekdays_v_weekends-1.png)
   
 as can be seen from the graphs above -  
 1) There's a major activity peak on weekday mornings which is delayed and moderated on a weekend  
