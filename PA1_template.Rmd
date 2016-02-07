@@ -14,7 +14,7 @@ chrFile_input <- "activity.zip"
 chrFile_read <- "activity.csv"
 # First unzip the data, it's already in the GIT repository conatining this document
 unzip (chrFile_input)
-# Read the data
+# Read the data.
 dfStep_data <- read.csv(chrFile_read)
 ```
 ## What is mean total number of steps taken per day?
