@@ -14,8 +14,9 @@ dfStep_data <- read.csv(chrFile_read)
 ## What is mean total number of steps taken per day?
 
 ```r
-# Calculate the total number of steps per day
-numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum,na.rm=TRUE)
+# Calculate the total number of steps per day(first form of tapply causes problems so is commented out)
+#numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum,na.rm=TRUE)
+numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum)
 # Generate the new mean & median  steps per day
 numSteps_mean <- as.integer(mean(numSteps_day, na.rm=TRUE))
 numSteps_median <- as.integer(median(numSteps_day, na.rm=TRUE))
@@ -27,8 +28,8 @@ hist(numSteps_day,20,
 
 ![](PA1_template_files/figure-html/total_steps_raw-1.png)
   
-The mean of the total number of steps per day is 9354
- and the median of the total number of steps per day is 10395  
+The mean of the total number of steps per day is 10766
+ and the median of the total number of steps per day is 10765  
 
 ## What is the average daily activity pattern?
 
@@ -49,7 +50,7 @@ plot(levels (as.factor(dfStep_data$interval)), numAve_steps_interval, type="l",
 
 ![](PA1_template_files/figure-html/activity_pattern_raw-1.png)
   
-As can bee seen in the chart above, a big activity peak occurs in the morning  
+As can be seen in the chart above, a big activity peak occurs in the morning  
 
 The maximum number of steps (on average) is 206
  and occurs in the 5 minute interval starting at 835
@@ -84,15 +85,12 @@ hist(numSteps_day_imp,20,
 There were 2304 NAs in the raw data.  
   
 Once NAs are replaced with imputed data (ie. with the average for that 5 minute time period)  
-1.  The new mean steps per day is 10765 (vs 9354 previously)  
-2.  The new median steps per day is 10762  (vs 10395 previously)  
+1.  The new mean steps per day is 10765 (vs 10766 previously)  
+2.  The new median steps per day is 10762  (vs 10765 previously)  
   
-We can see that the mean and median number of steps per day have risen once data is "imputed".
- This reflects the fact that we have added data where previously there was none.   
-  
-It should be noted that many NAs occurred where there was no data for a whole day - 
- these imputed values would have little impact on the overall median.  
-  
+We can see that the mean and median number of steps per day have barely changed once data is "imputed".
+ This reflects the fact that we have replaced NA with the mean.   
+
 NOTE: Imputed data is  
 1. Based on the 5 minute intervals  
 2. Imputed values are for intervals where the "number of steps" value is NA  
@@ -115,7 +113,8 @@ dfPlot_final <- aggregate.data.frame(dfStep_data_imp$steps,
                                      list(dfStep_data_imp$interval, dfStep_data_imp$day_type), FUN=mean)
 names(dfPlot_final) <- c("interval","day_type","AveSteps")
 # Create the plot (2 plots side by side)
-par(mar=c(2,2,5,1),mfcol=c(1,2),cex.main=0.6,cex.lab=0.6,cex.axis=0.6)
+#par(mar=c(2,2,5,1),mfrow=c(1,2),cex.main=0.6,cex.lab=0.6,cex.axis=0.6)
+par(mar=c(2,2,1,1),mfcol=c(2,1),cex.main=0.6,cex.lab=0.6,cex.axis=0.6)
 numYrange <-range(0,dfPlot_final$AveSteps) # Set max Y value - for easier comparison
 plot(levels(as.factor(dfPlot_final$interval)), dfPlot_final$AveSteps[dfPlot_final$day_type=="WorkDay"],
      ylim=numYrange, main="Week Day Average Steps By 5 Minute Interval",
