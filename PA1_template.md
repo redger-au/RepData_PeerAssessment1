@@ -17,7 +17,7 @@ dfStep_data <- read.csv(chrFile_read)
 # Calculate the total number of steps per day(first form of tapply causes problems so is commented out)
 #numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum,na.rm=TRUE)
 numSteps_day = tapply(dfStep_data$steps,dfStep_data$date,FUN=sum)
-# Generate the new mean & median  steps per day
+# Generate the new mean & median  steps per day, ready to be inserted inline in commentary
 numSteps_mean <- as.integer(mean(numSteps_day, na.rm=TRUE))
 numSteps_median <- as.integer(median(numSteps_day, na.rm=TRUE))
 # Then plot a histogram
@@ -69,7 +69,7 @@ for (i in 1:length(numAve_steps_interval)){
                               is.na(dfStep_data_imp$steps)] <- round(numAve_steps_interval[i],0)
 }
 
-# Generate the new mean & median  steps per day
+# Generate the new mean & median  steps per day, ready to be inserted inline in commentary
 numSteps_day_imp = tapply(dfStep_data_imp$steps,dfStep_data_imp$date,FUN=sum,na.rm=TRUE)
 numSteps_mean_imp <- as.integer(mean(numSteps_day_imp, na.rm=TRUE))
 numSteps_median_imp <- as.integer(median(numSteps_day_imp, na.rm=TRUE))
@@ -104,24 +104,21 @@ NOTE: Imputed data is
 # Start by categorising days as either weekday or weekend
 library(lubridate, warn.conflicts=FALSE)  # Date handling, myd function
 dfStep_data_imp$day_type <- rep("WorkDay",length(dfStep_data_imp$date))
-dfStep_data_imp$day_type[weekdays(ymd(as.character(dfStep_data_imp$date))) %in% c("Saturday","Sunday")] <- "Weekend"
+dfStep_data_imp$day_type[weekdays(ymd(as.character(dfStep_data_imp$date)))
+                         %in% c("Saturday","Sunday")] <- "Weekend"
 dfStep_data_imp$day_type <- as.factor(dfStep_data_imp$day_type)
 # Create the data to be used for plots, a summary of steps by day-type and 5-minute-interval
 library("data.table", warn.conflicts=FALSE)    # Data table handling, for Aggregate function
 numAve_steps_interval_imp <- tapply(dfStep_data_imp$steps,dfStep_data_imp$interval,FUN=mean,na.rm=TRUE)
 dfPlot_final <- aggregate.data.frame(dfStep_data_imp$steps,  
-                                     list(dfStep_data_imp$interval, dfStep_data_imp$day_type), FUN=mean)
+                        list(dfStep_data_imp$interval, dfStep_data_imp$day_type), FUN=mean)
 names(dfPlot_final) <- c("interval","day_type","AveSteps")
-# Create the plot (2 plots side by side)
-#par(mar=c(2,2,5,1),mfrow=c(1,2),cex.main=0.6,cex.lab=0.6,cex.axis=0.6)
-par(mar=c(2,2,1,1),mfcol=c(2,1),cex.main=0.6,cex.lab=0.6,cex.axis=0.6)
-numYrange <-range(0,dfPlot_final$AveSteps) # Set max Y value - for easier comparison
-plot(levels(as.factor(dfPlot_final$interval)), dfPlot_final$AveSteps[dfPlot_final$day_type=="WorkDay"],
-     ylim=numYrange, main="Week Day Average Steps By 5 Minute Interval",
-     xlab="5 Minute Interval", ylab="Average Steps", type="l")
-plot(levels(as.factor(dfPlot_final$interval)), dfPlot_final$AveSteps[dfPlot_final$day_type=="Weekend"],
-     ylim=numYrange, main="Weekend Average Steps By 5 Minute Interval",
-     xlab="5 Minute Interval", ylab="Average Steps", type="l")
+# Create the plot (2 plots one above the other)
+library(ggplot2, warn.conflicts=FALSE)  # Plotting
+qp <- qplot(interval, AveSteps, data=dfPlot_final,facets=day_type ~ .,geom="line",
+            main="Average Steps By 5 Minute Interval",
+            xlab="5 Minute Interval",ylab="Average Steps")
+print (qp)
 ```
 
 ![](PA1_template_files/figure-html/weekdays_v_weekends-1.png)
